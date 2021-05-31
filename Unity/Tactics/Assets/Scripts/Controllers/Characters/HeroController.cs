@@ -16,6 +16,9 @@ public class HeroController : MonoBehaviour
     public Transform BodySkin;
     public Transform BackAttachment;
 
+    [Header("Weapons")]
+    public Transform MainHandSlot;
+
     public CharacterGameplay Character { get; private set; }
 
     #region Animation Hash
@@ -190,7 +193,12 @@ public class HeroController : MonoBehaviour
     {
         var animInstance = AppConts.AnimatorControllerPath.UNARMED;
 
-        //TODO: Verificar aqui qual o controller que vai ser usado de acordo com a arma equipada
+        var mainHand = Character.BaseInfo.MainHand;
+        if (mainHand != null)
+        {
+            if (mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandAxe)
+                animInstance = AppConts.AnimatorControllerPath.TWO_HANDED_SWORD;
+        }
 
         Animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>(animInstance);
 

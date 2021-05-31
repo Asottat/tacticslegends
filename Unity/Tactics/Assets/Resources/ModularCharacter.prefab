@@ -13928,6 +13928,7 @@ Transform:
   - {fileID: 2350129658964677530}
   - {fileID: 2958785307874082319}
   - {fileID: 8114891148540184424}
+  - {fileID: 2918400379091377926}
   m_Father: {fileID: 4840349459611596118}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -28740,6 +28741,36 @@ SkinnedMeshRenderer:
     m_Center: {x: -17.316586, y: -10.450047, z: 0}
     m_Extent: {x: 21.909916, y: 25.788261, z: 13.306488}
   m_DirtyAABB: 0
+--- !u!1 &4142843220232547583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2918400379091377926}
+  m_Layer: 0
+  m_Name: Weapon_R
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2918400379091377926
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4142843220232547583}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: 9.4, y: 3.2, z: 2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6531779213591230251}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: -90}
 --- !u!1 &4146925837474175236
 GameObject:
   m_ObjectHideFlags: 0
@@ -43940,6 +43971,7 @@ MonoBehaviour:
   Animator: {fileID: 1520723960982702291}
   BodySkin: {fileID: 8213007060202598500}
   BackAttachment: {fileID: 7953883009181844027}
+  MainHandSlot: {fileID: 2918400379091377926}
 --- !u!1 &5282486501793530545
 GameObject:
   m_ObjectHideFlags: 0

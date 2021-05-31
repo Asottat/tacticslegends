@@ -31,7 +31,7 @@ namespace Assets.Scripts.Entities
         public int BaseSpeed { get; set; }
 
         public List<Equipment> EquipSlots { get; set; }
-        public Equipment MainHand { get; set; } //TODO: Mudar para uma classe de armas/itens
-        public Equipment OffHand { get; set; } //TODO: Mudar para uma classe de armas/itens
+        public Weapon MainHand { get; set; }
+        public Weapon OffHand { get; set; }
     }
 }

@@ -6,11 +6,13 @@
         public class PrefabPath
         {
             public const string MODULAR_HERO = "ModularCharacter";
+            public const string WEAPONS = "Weapons/Wep";
         }
 
         public class AnimatorControllerPath
         {
             public const string UNARMED = "Animators/CharUnarmed";
+            public const string TWO_HANDED_SWORD = "Animators/CharTwoHandedSword";
         }
 
         public class PopupPath

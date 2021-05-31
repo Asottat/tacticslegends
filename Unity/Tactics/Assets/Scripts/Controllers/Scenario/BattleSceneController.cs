@@ -398,7 +398,8 @@ public class BattleSceneController : MonoBehaviour
                     new Equipment() { BaseModel = new BaseEquipModel(121,2,1,"0:5:13") },
                     new Equipment() { BaseModel = new BaseEquipModel(131,5,1,"0:8:4") },
                     new Equipment() { BaseModel = new BaseEquipModel(229,7,"2:4:1") }
-                }
+                },
+                MainHand = new Weapon() { BaseModel = new BaseWeaponModel() { Id = 1, WeaponType = (int)WeaponType.TwoHandAxe } }
             };
         }
         else if (id == 3)
@@ -996,6 +997,14 @@ public class BattleSceneController : MonoBehaviour
 
         if (defaultRotation > 0)
             ctrl.FaceDirection(defaultRotation);
+
+        if (hero.BaseInfo.MainHand != null)
+        {
+            var weaponPrefab = Resources.Load(string.Concat(AppConts.PrefabPath.WEAPONS, hero.BaseInfo.MainHand.BaseModel.Id.ToString("000")));
+            var weaponObj = Instantiate(weaponPrefab, ctrl.MainHandSlot) as GameObject;
+            weaponObj.transform.localPosition = Vector3.zero;
+            weaponObj.transform.localRotation = _defaultRotation;
+        }
 
         if (_turnPhase == TurnPhase.Positioning && _playerTurn == _currentPlayerId)
         {
