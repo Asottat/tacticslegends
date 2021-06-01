@@ -399,7 +399,8 @@ public class BattleSceneController : MonoBehaviour
                     new Equipment() { BaseModel = new BaseEquipModel(131,5,1,"0:8:4") },
                     new Equipment() { BaseModel = new BaseEquipModel(229,7,"2:4:1") }
                 },
-                MainHand = new Weapon() { BaseModel = new BaseWeaponModel() { Id = 1, WeaponType = (int)WeaponType.TwoHandAxe } }
+                //MainHand = new Weapon() { BaseModel = new BaseWeaponModel() { Id = 11, WeaponType = (int)WeaponType.Sword } },
+                OffHand = new Weapon() { BaseModel = new BaseWeaponModel() { Id = 82, WeaponType = (int)WeaponType.LongBow } }
             };
         }
         else if (id == 3)
@@ -998,14 +999,6 @@ public class BattleSceneController : MonoBehaviour
         if (defaultRotation > 0)
             ctrl.FaceDirection(defaultRotation);
 
-        if (hero.BaseInfo.MainHand != null)
-        {
-            var weaponPrefab = Resources.Load(string.Concat(AppConts.PrefabPath.WEAPONS, hero.BaseInfo.MainHand.BaseModel.Id.ToString("000")));
-            var weaponObj = Instantiate(weaponPrefab, ctrl.MainHandSlot) as GameObject;
-            weaponObj.transform.localPosition = Vector3.zero;
-            weaponObj.transform.localRotation = _defaultRotation;
-        }
-
         if (_turnPhase == TurnPhase.Positioning && _playerTurn == _currentPlayerId)
         {
             _markMatrix[_auxTargetSpot.Value.x, _auxTargetSpot.Value.y].SetSelected(false);
@@ -1124,7 +1117,7 @@ public class BattleSceneController : MonoBehaviour
         var availablePath = PathFinder_GetViableSpots(character.Movement, character.Jump, character.PosX, character.PosY);
 
         var hex = _mapMatrix[character.PosX, character.PosY];
-        SetCameraPosition(GetHexPosition(hex.CoordX, hex.CoordY, hex.Height));
+        SetCameraPositionAndLock(GetHexPosition(hex.CoordX, hex.CoordY, hex.Height));
 
         if (availablePath != null && availablePath.Any())
         {

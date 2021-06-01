@@ -68,3 +68,23 @@ Dungeon Pack
 	065 - SM_Wep_Staff_DoubleBlade_01
 	066 - SM_Wep_Staff_Gem_01
 	067 - SM_Wep_Straightsword_01
+	
+Samurai Pack
+	068 - SM_Wep_BoStaff_01
+	069 - SM_Wep_JuMonjiYari_01
+	070 - SM_Wep_Kunai_01
+	071 - SM_Wep_Kunai_02
+	072 - SM_Wep_Naginata_01
+	073 - SM_Wep_Naginata_02
+	074 - SM_Wep_Ninjato_01
+	075 - SM_Wep_Odachi_01
+	076 - SM_Wep_Sai_01
+	077 - SM_Wep_Shuriken_01
+	078 - SM_Wep_Shuriken_02
+	079 - SM_Wep_Tanto_01
+	080 - SM_Wep_Tonfa_01
+	
+Bow and Crossbow
+	081 - Rigged_Bow_Testing
+	082 - Rigged_Bow_NativeAmerican_Testing
+	083 - 

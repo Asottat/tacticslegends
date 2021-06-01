@@ -13,6 +13,12 @@
         {
             public const string UNARMED = "Animators/CharUnarmed";
             public const string TWO_HANDED_SWORD = "Animators/CharTwoHandedSword";
+            public const string TWO_HANDED_HAMMER = "Animators/CharTwoHandedHammer";
+            public const string TWO_HANDED_SPEAR = "Animators/CharTwoHandedSpear";
+            public const string POLEARM = "Animators/CharPolearm";
+            public const string ONE_HAND = "Animators/CharOneHand";
+            public const string DUAL_WIELD = "Animators/CharDualWield";
+            public const string BOW = "Animators/CharBow";
         }
 
         public class PopupPath

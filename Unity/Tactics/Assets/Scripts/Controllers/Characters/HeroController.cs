@@ -18,8 +18,13 @@ public class HeroController : MonoBehaviour
 
     [Header("Weapons")]
     public Transform MainHandSlot;
+    public Transform SpearSpecialSlot;
+    public Transform OffHandSlot;
+    public Transform BowSpecialSlot;
 
     public CharacterGameplay Character { get; private set; }
+
+    private Animator WeaponAnimator;
 
     #region Animation Hash
 
@@ -37,6 +42,8 @@ public class HeroController : MonoBehaviour
     private int _animationVictoryMove; //DoVictoryMove
     private int _animationDefeatMove; //DoDefeatMove
     private int _animationLookAround; //DoLookAround
+
+    private int _weaponAnimationAttack; //Weapon -> DoAttack
     #endregion
 
     #region Bools
@@ -194,10 +201,35 @@ public class HeroController : MonoBehaviour
         var animInstance = AppConts.AnimatorControllerPath.UNARMED;
 
         var mainHand = Character.BaseInfo.MainHand;
+        var offHand = Character.BaseInfo.OffHand;
         if (mainHand != null)
         {
             if (mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandAxe)
                 animInstance = AppConts.AnimatorControllerPath.TWO_HANDED_SWORD;
+            else if (mainHand.BaseModel.WeaponType == (int)WeaponType.Polearm)
+                animInstance = AppConts.AnimatorControllerPath.POLEARM;
+            else if (mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandHammer
+                  || mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandMace)
+                animInstance = AppConts.AnimatorControllerPath.TWO_HANDED_HAMMER;
+            else if (mainHand.BaseModel.WeaponType == (int)WeaponType.Spear)
+                animInstance = AppConts.AnimatorControllerPath.TWO_HANDED_SPEAR;
+            else
+            {
+                if (offHand != null && offHand.BaseModel.WeaponType != (int)WeaponType.Shield)
+                {
+                    animInstance = AppConts.AnimatorControllerPath.DUAL_WIELD;
+                }
+                else
+                {
+                    animInstance = AppConts.AnimatorControllerPath.ONE_HAND;
+                }
+            }
+        }
+        else if (offHand != null)
+        {
+            if (offHand.BaseModel.WeaponType == (int)WeaponType.ShortBow
+             || offHand.BaseModel.WeaponType == (int)WeaponType.LongBow)
+                animInstance = AppConts.AnimatorControllerPath.BOW;
         }
 
         Animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>(animInstance);
@@ -384,6 +416,47 @@ public class HeroController : MonoBehaviour
         #endregion
 
         #endregion
+
+        #region Weapons
+
+        //TODO: Colocar lógica das texturas
+
+        if (Character.BaseInfo.MainHand != null)
+        {
+            var weaponPrefab = Resources.Load(string.Concat(AppConts.PrefabPath.WEAPONS, Character.BaseInfo.MainHand.BaseModel.Id.ToString("000")));
+            GameObject weaponObj = null;
+            if (Character.BaseInfo.MainHand.BaseModel.WeaponType == (int)WeaponType.Spear)
+                weaponObj = Instantiate(weaponPrefab, SpearSpecialSlot) as GameObject;
+            else
+                weaponObj = Instantiate(weaponPrefab, MainHandSlot) as GameObject;
+            weaponObj.transform.localPosition = Vector3.zero;
+            weaponObj.transform.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+        }
+
+        if (Character.BaseInfo.OffHand != null)
+        {
+            var wt = Character.BaseInfo.OffHand.BaseModel.WeaponType;
+
+            var weaponPrefab = Resources.Load(string.Concat(AppConts.PrefabPath.WEAPONS, Character.BaseInfo.OffHand.BaseModel.Id.ToString("000")));
+            GameObject weaponObj = null;
+            if (wt == (int)WeaponType.ShortBow || wt == (int)WeaponType.LongBow)
+                weaponObj = Instantiate(weaponPrefab, BowSpecialSlot) as GameObject;
+            else
+                weaponObj = Instantiate(weaponPrefab, OffHandSlot) as GameObject;
+            weaponObj.transform.localPosition = Vector3.zero;
+            weaponObj.transform.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+
+            //TODO: Armas com animators a textura vai no objeto filho
+            if (wt == (int)WeaponType.ShortBow || wt == (int)WeaponType.LongBow)
+                WeaponAnimator = weaponObj.GetComponent<Animator>();
+        }
+
+        if (WeaponAnimator != null)
+        {
+            _weaponAnimationAttack = Animator.StringToHash("DoAttack");
+        }
+
+        #endregion
     }
 
     //TODO: Passar a skin (material) também - Equipamento e pele
@@ -483,7 +556,10 @@ public class HeroController : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(positionDifference);
         _rotationToKeep = transform.rotation;
         Animator.SetTrigger(_animationAttack);
-        _baseAttackDoneTimer = Time.time + 1f;
+        _baseAttackDoneTimer = Time.time + 1f; //TODO: Setar de acordo com a arma?
+
+        if (WeaponAnimator != null)
+            WeaponAnimator.SetTrigger(_weaponAnimationAttack);
     }
 
     public void TakeDamage(int damage, float animationDelay, bool isBackAttack = false)
