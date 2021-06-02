@@ -21,6 +21,7 @@ public class HeroController : MonoBehaviour
     public Transform SpearSpecialSlot;
     public Transform OffHandSlot;
     public Transform BowSpecialSlot;
+    public Transform ShieldSlot;
 
     public CharacterGameplay Character { get; private set; }
 
@@ -204,9 +205,12 @@ public class HeroController : MonoBehaviour
         var offHand = Character.BaseInfo.OffHand;
         if (mainHand != null)
         {
-            if (mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandAxe)
+            if (mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandSword
+             || mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandAxe)
                 animInstance = AppConts.AnimatorControllerPath.TWO_HANDED_SWORD;
-            else if (mainHand.BaseModel.WeaponType == (int)WeaponType.Polearm)
+            else if (mainHand.BaseModel.WeaponType == (int)WeaponType.Polearm
+                  || mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandHammer
+                  || mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandMace)
                 animInstance = AppConts.AnimatorControllerPath.POLEARM;
             else if (mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandHammer
                   || mainHand.BaseModel.WeaponType == (int)WeaponType.TwoHandMace)
@@ -431,6 +435,13 @@ public class HeroController : MonoBehaviour
                 weaponObj = Instantiate(weaponPrefab, MainHandSlot) as GameObject;
             weaponObj.transform.localPosition = Vector3.zero;
             weaponObj.transform.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+
+            if (Character.BaseInfo.MainHand.Skin.HasValue && Character.BaseInfo.MainHand.Skin.Value > 1)
+            {
+                var mat = Resources.Load<Material>(string.Concat(AppConts.MaterialPath.WEAPON, Character.BaseInfo.MainHand.Skin.Value));
+                var renderer = weaponObj.GetComponentInChildren<Renderer>();
+                renderer.material = mat;
+            }
         }
 
         if (Character.BaseInfo.OffHand != null)
@@ -441,6 +452,8 @@ public class HeroController : MonoBehaviour
             GameObject weaponObj = null;
             if (wt == (int)WeaponType.ShortBow || wt == (int)WeaponType.LongBow)
                 weaponObj = Instantiate(weaponPrefab, BowSpecialSlot) as GameObject;
+            else if (wt == (int)WeaponType.Shield)
+                weaponObj = Instantiate(weaponPrefab, ShieldSlot) as GameObject;
             else
                 weaponObj = Instantiate(weaponPrefab, OffHandSlot) as GameObject;
             weaponObj.transform.localPosition = Vector3.zero;
@@ -449,6 +462,13 @@ public class HeroController : MonoBehaviour
             //TODO: Armas com animators a textura vai no objeto filho
             if (wt == (int)WeaponType.ShortBow || wt == (int)WeaponType.LongBow)
                 WeaponAnimator = weaponObj.GetComponent<Animator>();
+
+            if (Character.BaseInfo.OffHand.Skin.HasValue && Character.BaseInfo.OffHand.Skin.Value > 1)
+            {
+                var mat = Resources.Load<Material>(string.Concat(AppConts.MaterialPath.WEAPON, Character.BaseInfo.OffHand.Skin.Value));
+                var renderer = weaponObj.GetComponentInChildren<Renderer>();
+                renderer.material = mat;
+            }
         }
 
         if (WeaponAnimator != null)

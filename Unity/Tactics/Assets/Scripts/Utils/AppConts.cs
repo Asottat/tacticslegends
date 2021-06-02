@@ -42,7 +42,11 @@
             public const string ALLY = "Marks/HexAlly";
             public const string ENEMY = "Marks/HexEnemy";
             public const string ATTACK_OPTION = "Marks/HexAttackOption";
+        }
 
+        public class MaterialPath
+        {
+            public const string WEAPON = "Materials/BaseWeapon";
         }
 
         //public class HexMapConfig

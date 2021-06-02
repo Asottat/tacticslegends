@@ -16,18 +16,5 @@
         Finger2 = 11,
         Trinket1 = 12,
         Trinket2 = 13
-
-        //Head = 1,
-        //Neck = 2,
-        //Shoulder = 3,
-        //Chest = 4,
-        //Wrists = 5,
-        //Hands = 6,
-        //Waist = 7,
-        //Legs = 8,
-        //Feet = 9,
-        //Finger = 10,
-        //Trinket = 11,
-        //Back = 12
     }
 }

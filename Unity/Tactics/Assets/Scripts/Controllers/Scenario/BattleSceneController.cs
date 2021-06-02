@@ -2,6 +2,8 @@ using Assets.Scripts.Entities;
 using Assets.Scripts.Entities.LocalData;
 using Assets.Scripts.Entities.Utility;
 using Assets.Scripts.Enums;
+using Assets.Scripts.Services;
+using Assets.Scripts.Services.LocalData;
 using Assets.Scripts.Utils;
 using System.Collections.Generic;
 using System.Linq;
@@ -145,6 +147,40 @@ public class BattleSceneController : MonoBehaviour
 
     #endregion
 
+    #region Local Services
+
+    BaseEquipService _svc_baseEquip;
+    BaseEquipService BaseEquipService
+    {
+        get
+        {
+            if (_svc_baseEquip == null)
+                _svc_baseEquip = new BaseEquipService();
+
+            return _svc_baseEquip;
+        }
+    }
+
+    BaseWeaponService _svc_baseWeapon;
+    BaseWeaponService BaseWeaponService
+    {
+        get
+        {
+            if (_svc_baseWeapon == null)
+                _svc_baseWeapon = new BaseWeaponService();
+
+            return _svc_baseWeapon;
+        }
+    }
+
+    #endregion
+
+    #region Start
+
+    private int _numPlayersLoaded = 0;
+
+    #endregion
+
     private bool _isPopupActive = false;
 
     void Start()
@@ -152,6 +188,7 @@ public class BattleSceneController : MonoBehaviour
         _mapMatrixHalfX = System.Convert.ToInt32(System.Math.Floor((float)MAX_MAP_MATRIX_X / 2f));
         _mapMatrixHalfY = System.Convert.ToInt32(System.Math.Floor((float)MAX_MAP_MATRIX_Y / 2f));
 
+        //LoadData();
         LoadResources();
         InstantiatePopups();
         ConfigureReferences();
@@ -235,42 +272,14 @@ public class BattleSceneController : MonoBehaviour
         _mapMatrix[0, 5] = new HexData(0, 5, 4, 2);
         _mapMatrix[0, 6] = new HexData(0, 6, 4, 2);
 
-        //_mapMatrix[0, 0] = new HexData(0, 0, 0, 2);
-        //_mapMatrix[0, 1] = new HexData(0, 1, 0, 2);
-        //_mapMatrix[0, 2] = new HexData(0, 2, 0, 2, 2);
-        //_mapMatrix[1, 0] = new HexData(1, 0, 0, 2);
-        //_mapMatrix[1, 1] = new HexData(1, 1, 0, 2);
-        //_mapMatrix[1, 2] = new HexData(1, 2, 0, 2);
-        //_mapMatrix[1, 3] = new HexData(1, 3, 0, 2, 2);
-        //_mapMatrix[2, 0] = new HexData(2, 0, 0, 2, 1);
-        //_mapMatrix[2, 1] = new HexData(2, 1, 0, 2);
-        //_mapMatrix[2, 2] = new HexData(2, 2, 0, 2);
-        //_mapMatrix[2, 3] = new HexData(2, 3, 0, 2);
-        //_mapMatrix[2, 4] = new HexData(2, 4, 0, 2, 2);
-        //_mapMatrix[3, 1] = new HexData(3, 1, 0, 2, 1);
-        //_mapMatrix[3, 2] = new HexData(3, 2, 0, 2);
-        //_mapMatrix[3, 3] = new HexData(3, 3, 0, 2);
-        //_mapMatrix[3, 4] = new HexData(3, 4, 0, 2);
-        //_mapMatrix[4, 2] = new HexData(4, 2, 0, 2, 1);
-        //_mapMatrix[4, 3] = new HexData(4, 3, 0, 2);
-        //_mapMatrix[4, 4] = new HexData(4, 4, 0, 2);
-        //_mapMatrix[4, 5] = new HexData(4, 5, 0, 2);
-
-        //TODO: Mudar para consulta do banco e controlar se está pronto por variável
-        _allHeroes.Add(FAKE_LoadFakeHero(1));
-        _allHeroes.Add(FAKE_LoadFakeHero(2));
-        _allHeroes.Add(FAKE_LoadFakeHero(3));
-
         //TODO: Mudar para consulta do banco e controlar se está pronto por variável
         _player1 = 1;
         _player2 = 0;
 
-        //TODO: Só executar depois que os dados estiverem OK
-        NextTurn();
-
         RenderizeMap();
 
         SetCameraRotation(0f);
+        LoadData(); //TODO: Apagar daqui e mudar para o do início
     }
 
     void Update()
@@ -292,6 +301,32 @@ public class BattleSceneController : MonoBehaviour
             SetCameraPosition(_cameraMobileTarget.position);
         }
     }
+
+    #region Getting game data
+
+    private void LoadData()
+    {
+        //TODO: Mudar para um método que já retorne o jogador e os dados do personagem
+        StartCoroutine(ApiDataService.Instance.GetCharactersCompleteByPlayer(1, CharactersLoaded));
+        StartCoroutine(ApiDataService.Instance.GetCharactersCompleteByPlayer(0, CharactersLoaded));
+    }
+
+    private void CharactersLoaded(List<CharacterGameplay> characters)
+    {
+        _allHeroes.AddRange(characters);
+        _numPlayersLoaded++;
+        CheckForStart();
+    }
+
+    private void CheckForStart()
+    {
+        if (_numPlayersLoaded == 2)
+        {
+            NextTurn();
+        }
+    }
+
+    #endregion
 
     private void LoadResources()
     {
@@ -326,114 +361,6 @@ public class BattleSceneController : MonoBehaviour
         ButtonEndTurn.OnClicked += (s, e) => EndTurnButtonClicked();
         ButtonCameraLock.OnClicked += (s, e) => LockCamera();
         ButtonCameraLock.SetEnabled(false);
-    }
-
-    private CharacterGameplay FAKE_LoadFakeHero(int id)
-    {
-        var character = new Character();
-
-        if (id == 1)
-        {
-            character = new Character()
-            {
-                Id = 1,
-                PlayerId = 1,
-                Name = "Hasdrubhal",
-                Level = 10,
-                Gender = 0,
-                Eyebrows = 3,
-                FacialHair = 4,
-                Head = 5,
-                Hair = 4,
-                BaseHealth = 400,
-                BaseVitality = 100,
-                BaseStrength = 100,
-                BaseDextery = 100,
-                BaseIntelligence = 100,
-                BaseEvasion = 100,
-                BaseMovement = 2,
-                BaseJump = 1,
-                BaseSpeed = 40,
-                EquipSlots = new List<Equipment>()
-                {
-                    new Equipment() { BaseModel = new BaseEquipModel(160,0,3,"0:0:1:2","2:2:1") },
-                    new Equipment() { BaseModel = new BaseEquipModel(38,1,3,"0:3:15","0:4:13","0:5:12") },
-                    new Equipment() { BaseModel = new BaseEquipModel(92,4,3,"0:7:20") },
-                    new Equipment() { BaseModel = new BaseEquipModel(96,3,3,"0:5:5","0:6:11") },
-                    new Equipment() { BaseModel = new BaseEquipModel(117,2,2,"0:5:9") },
-                    new Equipment() { BaseModel = new BaseEquipModel(145,5,3,"0:8:14","2:8:6") },
-                    new Equipment() { BaseModel = new BaseEquipModel(238,7,"2:4:10") },
-                    new Equipment() { BaseModel = new BaseEquipModel(261,6,3,"2:5:18") }
-                }
-            };
-        }
-        else if (id == 2)
-        {
-            character = new Character()
-            {
-                Id = 2,
-                PlayerId = 1,
-                Name = "Brunette",
-                Level = 10,
-                Gender = 1,
-                Eyebrows = 5,
-                FacialHair = 0,
-                Head = 8,
-                Hair = 9,
-                BaseHealth = 400,
-                BaseVitality = 100,
-                BaseStrength = 100,
-                BaseDextery = 30,
-                BaseIntelligence = 100,
-                BaseEvasion = 75,
-                BaseMovement = 3,
-                BaseJump = 3,
-                BaseSpeed = 65,
-                EquipSlots = new List<Equipment>()
-                {
-                    new Equipment() { BaseModel = new BaseEquipModel(216,0,1,"2:0:0:3") },
-                    new Equipment() { BaseModel = new BaseEquipModel(19,1,1,"0:3:9","0:4:20","0:5:18") },
-                    new Equipment() { BaseModel = new BaseEquipModel(76,4,1,"0:7:4") },
-                    new Equipment() { BaseModel = new BaseEquipModel(74,3,1,"0:5:13","0:6:1") },
-                    new Equipment() { BaseModel = new BaseEquipModel(121,2,1,"0:5:13") },
-                    new Equipment() { BaseModel = new BaseEquipModel(131,5,1,"0:8:4") },
-                    new Equipment() { BaseModel = new BaseEquipModel(229,7,"2:4:1") }
-                },
-                //MainHand = new Weapon() { BaseModel = new BaseWeaponModel() { Id = 11, WeaponType = (int)WeaponType.Sword } },
-                OffHand = new Weapon() { BaseModel = new BaseWeaponModel() { Id = 82, WeaponType = (int)WeaponType.LongBow } }
-            };
-        }
-        else if (id == 3)
-        {
-            character = new Character()
-            {
-                Id = 3,
-                PlayerId = 0,
-                Name = "Cara Ruim",
-                Level = 10,
-                Gender = 0,
-                Eyebrows = 8,
-                FacialHair = 10,
-                Head = 12,
-                Hair = 12,
-                BaseHealth = 400,
-                BaseVitality = 100,
-                BaseStrength = 100,
-                BaseDextery = 100,
-                BaseIntelligence = 100,
-                BaseEvasion = 100,
-                BaseMovement = 3,
-                BaseJump = 2,
-                BaseSpeed = 55,
-                EquipSlots = new List<Equipment>()
-                {
-                    new Equipment() { BaseModel = new BaseEquipModel(33,1,2,"0:3:14") },
-                    new Equipment() { BaseModel = new BaseEquipModel(85,4,2,"0:7:13") }
-                }
-            };
-        }
-
-        return new CharacterGameplay(character);
     }
 
     private void RenderizeMap()
@@ -512,60 +439,6 @@ public class BattleSceneController : MonoBehaviour
     }
 
     #region TESTES - EXCLUIR
-
-    //bool PLAYER_PLACED = false;
-    //bool TARGET_PLACED = false;
-    //int TEMP_PLAYER_POS_X;
-    //int TEMP_PLAYER_POS_Y;
-
-    //void HANDLER_FAKES(HexData hex)
-    //{
-    //    if (!PLAYER_PLACED)
-    //    {
-    //        Vector3 position = GetHexPosition(hex.CoordX, hex.CoordY);
-    //        TEMP_PLAYER_POS_X = hex.CoordX;
-    //        TEMP_PLAYER_POS_Y = hex.CoordY;
-
-    //        var prefab = Resources.Load("TEMP/FakePlayer");
-    //        Instantiate(prefab, position, _defaultRotation);
-    //        PLAYER_PLACED = true;
-    //    }
-    //    else if (!TARGET_PLACED)
-    //    {
-    //        Vector3 position = GetHexPosition(hex.CoordX, hex.CoordY);
-
-    //        var prefab = Resources.Load("TEMP/FakeTarget");
-    //        Instantiate(prefab, position, _defaultRotation);
-    //        TARGET_PLACED = true;
-
-    //        //var inicio = System.DateTime.Now;
-    //        var path = new List<PathRef>();
-    //        if (TEMP_PLAYER_POS_X == hex.CoordX && TEMP_PLAYER_POS_Y == hex.CoordY)
-    //            path = PathFinder_GetViableSpots(TEMP_PLAYER_POS_X, TEMP_PLAYER_POS_Y);
-    //        else
-    //        {
-    //            path = PathFinder_GetPath(TEMP_PLAYER_POS_X, TEMP_PLAYER_POS_Y, hex.CoordX, hex.CoordY);
-
-    //            foreach(var p in path)
-    //                p.Position = GetHexPosition(p.PosX, p.PosY, p.Height);
-
-    //            _heroesControllers[0].MoveOnPath(path.ToList()); //ToList for removing reference
-    //        }
-    //        //var secs = (System.DateTime.Now - inicio).TotalSeconds;
-    //        //Debug.Log("Tempo: " + secs + "s");
-
-    //        if (path != null)
-    //        {
-    //            foreach (var point in path)
-    //            {
-    //                Vector3 pos = GetHexPosition(point.PosX, point.PosY);
-
-    //                var pfb = Resources.Load("TEMP/FakePath");
-    //                Instantiate(pfb, pos, _defaultRotation);
-    //            }
-    //        }
-    //    }
-    //}
 
     private float? _fake_opponentPositionTime;
     private void FAKE_OpponentPositioning()
@@ -1368,6 +1241,9 @@ public class BattleSceneController : MonoBehaviour
         //Rule 3: Back attack count only if the attackar and target are facing the same direction
         if (AppFunctions.GetDirectionNum(targetLine.Value.x, targetLine.Value.y) != target.FaceDirection)
             return false;
+
+        //Rule 4: Ranged attack don't have Back attack (unless it's a spear)
+        //TODO: Implementar (colocar por primeiro)
 
         Debug.Log("IS BACK ATTACK!");
         return true;

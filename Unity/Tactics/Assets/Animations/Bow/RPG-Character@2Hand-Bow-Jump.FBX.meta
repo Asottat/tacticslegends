@@ -772,7 +772,7 @@ ModelImporter:
       name: Bow-Jump
       takeName: Take 001
       internalID: 7400000
-      firstFrame: 1
+      firstFrame: 0
       lastFrame: 18
       wrapMode: 0
       orientationOffsetY: 0
@@ -784,7 +784,7 @@ ModelImporter:
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 0
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 1
@@ -801,7 +801,7 @@ ModelImporter:
       name: Bow-Land
       takeName: Take 001
       internalID: 7400002
-      firstFrame: 21
+      firstFrame: 20
       lastFrame: 34
       wrapMode: 0
       orientationOffsetY: 0

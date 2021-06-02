@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Enums;
+using UnityEngine;
 
 namespace Assets.Scripts.Utils
 {
@@ -47,6 +48,33 @@ namespace Assets.Scripts.Utils
         public static Quaternion GetRotation(int dirX, int dirY)
         {
             return GetRotation(GetDirectionNum(dirX, dirY));
+        }
+
+        public static int GetWeaponRangeByType(int? weaponType)
+        {
+            if (!weaponType.HasValue)
+                return 1;
+
+            switch (weaponType.Value)
+            {
+                case (int)WeaponType.ShortBow:
+                case (int)WeaponType.LongBow:
+                case (int)WeaponType.Pistol:
+                case (int)WeaponType.Rifle:
+                    return 3;
+                case (int)WeaponType.Spear:
+                    return 2;
+                default:
+                    return 1;
+            }
+        }
+
+        public static int GetWeaponRangeByType(int? mainWeapon, int? offWeapon)
+        {
+            var main = GetWeaponRangeByType(mainWeapon);
+            var off = GetWeaponRangeByType(offWeapon);
+
+            return main >= off ? main : off;
         }
 
         //public static Vector3 GetHexPosition(float coordX, float coordY, float? height = null)

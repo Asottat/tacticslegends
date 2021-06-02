@@ -22,6 +22,6 @@
         Throw = 18,
         Pistol = 19,
         Rifle = 20,
-        //TODO: AQUELE BAGULHO DE ENFEITE NA OFFHAND
+        Relic = 21
     }
 }
